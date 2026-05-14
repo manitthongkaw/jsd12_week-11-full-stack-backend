@@ -1,7 +1,10 @@
 import express from "express";
+import cors from "cors";
 import { users } from "./fakeData/fakeUsers.js";
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send(`
@@ -19,7 +22,7 @@ app.get("/", (req, res) => {
             <h1 class="text-3xl font-bold tracking-tight text-blue-600">Hello Client, I am your Server!</h1>
             <p class="mt-3 text-gray-600">This page is styled with <span class="font-semibold">Tailwind CSS</span> via CDN.</p>
             <div class="mt-6 flex flex-wrap items-center gap-3">
-              <a href="/api/v2/users" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">GET /users</a>
+              <a href="/users" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">GET /users</a>
               <span class="text-xs text-gray-500">Try POST/PUT/DELETE with your API client.</span>
             </div>
           </div>
@@ -33,6 +36,27 @@ app.get("/", (req, res) => {
 app.get("/users", (req, res) => {
   res.json(users);
 });
+app.post("/users", (req, res) => {
+  const { username, email, password } = req.body || {};
+  if (!username || !email) return res.status(400).json({ error: "Username and email are required" });
+  const nextId = String( (users.reduce((max, u) => Math.max(max, Number(u.id)), 0) || 0) + 1 );
+  const newUser = { id:nextId, username, email, password };
+  users.push(newUser);
+  return res.status(201).json(newUser);
+});
+app.put("/users/:id", (req, res) => {
+  const user = users.find((u) => u.id === req.params.id);
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: "Username, email andd password are required" });
+  };
+  user.username = username;
+  user.email = email;
+  user.password = password;
+  return res.status(200).json(user);
+});
+
+// app.delete();
 
 const PORT = 3002;
 app.listen(PORT, () => {

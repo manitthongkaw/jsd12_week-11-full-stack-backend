@@ -1,0 +1,22 @@
+### Get all users
+GET http://localhost:3002/users
+
+### Create a new user
+POST http://localhost:3002/users
+Content-Type: application/json
+
+{
+  "username": "Arm5",
+  "email": "arm5@mail.com",
+  "password": "armpw123"
+}
+
+### Update all field a user
+PUT http://localhost:3002/users/1
+Content-Type: application/json
+
+{
+  "username": "Arm6",
+  "email": "arm6@mail.com",
+  "password": "armpw666"
+}
