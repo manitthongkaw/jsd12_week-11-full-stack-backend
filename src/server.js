@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
+
 import { users } from "./fakeData/fakeUsers.js";
+import { router as apiRoutes } from "./routes/v1/index.js";
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -33,30 +36,7 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.get("/users", (req, res) => {
-  res.json(users);
-});
-app.post("/users", (req, res) => {
-  const { username, email, password } = req.body || {};
-  if (!username || !email) return res.status(400).json({ error: "Username and email are required" });
-  const nextId = String( (users.reduce((max, u) => Math.max(max, Number(u.id)), 0) || 0) + 1 );
-  const newUser = { id:nextId, username, email, password };
-  users.push(newUser);
-  return res.status(201).json(newUser);
-});
-app.put("/users/:id", (req, res) => {
-  const user = users.find((u) => u.id === req.params.id);
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    return res.status(400).json({ error: "Username, email andd password are required" });
-  };
-  user.username = username;
-  user.email = email;
-  user.password = password;
-  return res.status(200).json(user);
-});
-
-// app.delete();
+app.use("/api", apiRoutes);
 
 const PORT = 3002;
 app.listen(PORT, () => {
