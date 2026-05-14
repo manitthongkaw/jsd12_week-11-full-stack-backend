@@ -20,3 +20,7 @@ Content-Type: application/json
   "email": "arm6@mail.com",
   "password": "armpw666"
 }
+
+### Delete user by id
+DELETE http://localhost:3002/api/users/1
+Content-Type: application/json

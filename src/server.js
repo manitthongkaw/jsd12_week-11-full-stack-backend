@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 
-import { users } from "./fakeData/fakeUsers.js";
 import { router as apiRoutes } from "./routes/v1/index.js";
 
 const app = express();
@@ -25,7 +24,7 @@ app.get("/", (req, res) => {
             <h1 class="text-3xl font-bold tracking-tight text-blue-600">Hello Client, I am your Server!</h1>
             <p class="mt-3 text-gray-600">This page is styled with <span class="font-semibold">Tailwind CSS</span> via CDN.</p>
             <div class="mt-6 flex flex-wrap items-center gap-3">
-              <a href="/users" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">GET /users</a>
+              <a href="/api/users" class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">GET /api/users</a>
               <span class="text-xs text-gray-500">Try POST/PUT/DELETE with your API client.</span>
             </div>
           </div>
@@ -35,7 +34,6 @@ app.get("/", (req, res) => {
     </html>
   `);
 });
-
 app.use("/api", apiRoutes);
 
 const PORT = 3002;

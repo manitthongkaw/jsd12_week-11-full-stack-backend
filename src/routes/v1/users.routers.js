@@ -18,14 +18,18 @@ router.post("/", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const user = users.find((u) => u.id === req.params.id);
+  if (!user) return res.status(404).json({ error: "User not found" });
   const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    return res.status(400).json({ error: "Username, email andd password are required" });
-  };
+  if (!username || !email || !password) return res.status(400).json({ error: "Username, email and password are required" });
   user.username = username;
   user.email = email;
   user.password = password;
   return res.status(200).json(user);
 });
 
-// router.delete();
+router.delete("/:id", (req, res) => {
+  const index = users.findIndex((u) => u.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: "User not found" });
+  users.splice(index, 1);
+  return res.status(200).json(users);
+});
