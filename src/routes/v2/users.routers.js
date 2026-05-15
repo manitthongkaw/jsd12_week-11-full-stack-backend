@@ -1,21 +1,42 @@
 import { Router } from "express";
+import { User } from "../../modules/users/user.model.js";
 
 export const router = Router();
 
-router.get("/", (req, res) => {
-  res.json(users);
+const userResponse = (doc) => {
+  const user = doc.toObject();
+  delete user.password;
+  return user;
+};
+
+router.get("/", async (req, res) => {
+  try {
+    const user = await User.find();
+    return res.status(200).json({ success:true, data:user });
+  }
+  catch (err) {
+    return res.status(400).json({ success:false, error:err });
+  }
 });
 
-router.post("/", (req, res) => {
-  const { username, email, password } = req.body || {};
-  if (!username || !email) return res.status(400).json({ error: "Username and email are required" });
-  const nextId = String( (users.reduce((max, u) => Math.max(max, Number(u.id)), 0) || 0) + 1 );
-  const newUser = { id:nextId, username, email, password };
-  users.push(newUser);
-  return res.status(201).json(newUser);
+router.post("/", async (req, res) => {
+  const { username, email, password, role } = req.body || {};
+  if (!username || !email || !password) {
+    const err = new Error("username, email and password are required");
+    err.name = "ValidationError";
+    err.status = 400;
+    return res.status(400).json({ success:false, error:err });
+  }
+  try {
+    const doc = await User.create({ username, email, password, role});
+    return res.status(201).json({ success:true, data:userResponse(doc) });
+  }
+  catch (err) {
+    return res.status(400).json({ success:false, error:err });
+  }
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   const user = users.find((u) => u.id === req.params.id);
   if (!user) return res.status(404).json({ error: "User not found" });
   const { username, email, password } = req.body;
@@ -26,7 +47,7 @@ router.put("/:id", (req, res) => {
   return res.status(200).json(user);
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   const index = users.findIndex((u) => u.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: "User not found" });
   users.splice(index, 1);

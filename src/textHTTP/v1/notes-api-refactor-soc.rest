@@ -1,8 +1,8 @@
 ### Get all notes
-GET http://localhost:3002/api/notes
+GET http://localhost:3002/api/v1/notes
 
 ### Create a new notes
-POST http://localhost:3002/api/notes
+POST http://localhost:3002/api/v1/notes
 Content-Type: application/json
 
 {
@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### Update all field a notes
-PUT http://localhost:3002/api/notes/1
+PUT http://localhost:3002/api/v1/notes/1
 Content-Type: application/json
 
 {
@@ -20,5 +20,4 @@ Content-Type: application/json
 }
 
 ### Delete notes by id
-DELETE http://localhost:3002/api/notes/2
-Content-Type: application/json
+DELETE http://localhost:3002/api/v1/notes/2

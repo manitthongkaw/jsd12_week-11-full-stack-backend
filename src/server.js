@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import { router as apiRoutes } from "./routes/index.js";
+import { connectDB } from "./config/mongodb.js";
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.get("/", (req, res) => {
   `);
 });
 app.use("/api", apiRoutes);
+
+await connectDB();
 
 const PORT = 3002;
 app.listen(PORT, () => {
