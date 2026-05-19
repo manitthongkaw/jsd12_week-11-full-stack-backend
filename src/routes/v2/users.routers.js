@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { User } from "../../modules/users/user.model.js";
 import { supabase } from "../../config/supabase.js";
-import { getUsers, createUsers, updateUsers, deleteUsers } from "../../modules/users/users.controller.js";
+import { getUsers, createUsers, updateUsers, deleteUsers } from "../../modules/users/users.v2.controller.js";
 
 export const router = Router();
 

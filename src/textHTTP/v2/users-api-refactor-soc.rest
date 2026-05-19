@@ -6,20 +6,20 @@ POST http://localhost:3002/api/v2/users
 Content-Type: application/json
 
 {
-  "username": "Arm13",
-  "email": "arm13@mail.com",
+  "username": "Arm14",
+  "email": "arm14@mail.com",
   "password": "arm123456"
 }
 
 ### Update all field a user
-PUT http://localhost:3002/api/v2/users/6a06d7a670f0e4f9e5622bac
+PUT http://localhost:3002/api/v2/users/6a0be447602ce46600d913ae
 Content-Type: application/json
 
 {
-  "username": "Arm666Update",
-  "email": "arm666-2@mail.com",
-  "password": "armpw666666-2"
+  "username": "Arm14Update",
+  "email": "arm14-2@mail.com",
+  "password": "armpw14-2"
 }
 
 ### Delete user by id
-DELETE http://localhost:3002/api/v2/users/6a0be1d04d7dcdc1aa75a6ae
+DELETE http://localhost:3002/api/v2/users/6a0be447602ce46600d913ae
