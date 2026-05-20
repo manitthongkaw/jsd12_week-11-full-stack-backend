@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { User } from "./user.model.js";
 
 const userResponse = (doc) => {
@@ -73,3 +74,54 @@ export const deleteUsers = async (req, res, next) => {
     next(err);
   }
 }
+
+// Use bcrypt.hash
+export const registerUsers = async (req, res, next) => {
+  const { username, email, password, role } = req.body || {};
+  if (!username || !email || !password) {
+    const err = new Error("username, email and password are required");
+    err.name = "ValidationError";
+    err.status = 400;
+    return res.status(400).json({ success:false, error:err });
+  }
+  try {
+    const user = await User.findOne({email});
+    if(user) return res.status(400).json({ success:false, error:"อีเมลนี้ถูกใช้งานแล้ว" });
+    //const hashedPassword = await bcrypt.hash(password, 12);
+    //const doc = await User.create({ username, email, password:hashedPassword, role});
+    // Change bcrypt.hash to working in mongoose schema
+    const newUser = new User({ username, email, password, role });
+    const doc = await newUser.save();
+    //const doc = await User.create({ username, email, password, role});
+    return res.status(201).json({ success:true, data:"สมัครสมาชิกสำเร็จ!" });
+    //return res.status(201).json({ success:true, data:userResponse(doc) });
+  }
+  catch (err) {
+    //return res.status(400).json({ success:false, error:"อีเมลนี้ถูกใช้งานแล้ว" });
+    // return res.status(400).json({ success:false, error:err });
+    next(err);
+  }
+};
+// Use bcrypt.compare
+export const loginUsers = async (req, res, next) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) {
+    const err = new Error("email and password are required");
+    err.name = "ValidationError";
+    err.status = 400;
+    return res.status(400).json({ success:false, error:err });
+  }
+  try {
+    const user = await User.findOne({email}).select("+password");
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(isMatch) {
+      return res.status(201).json({ success:true, message:"เข้าสู่ระบบสำเร็จ!" });
+    } else {
+      return res.status(400).json({ success:false, error:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+    }
+  }
+  catch (err) {
+    return res.status(400).json({ success:false, error:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+    next(err);
+  }
+};

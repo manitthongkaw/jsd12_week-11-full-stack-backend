@@ -6,20 +6,40 @@ POST http://localhost:3002/api/v2/users
 Content-Type: application/json
 
 {
-  "username": "Arm14",
-  "email": "arm14@mail.com",
-  "password": "arm123456"
+  "username": "arm2",
+  "email": "arm2@mail.com",
+  "rold": "user",
+  "password": "arm123456-2"
 }
 
 ### Update all field a user
-PUT http://localhost:3002/api/v2/users/6a0be447602ce46600d913ae
+PUT http://localhost:3002/api/v2/users/6a06cd4e6af5d02ec5d82a23
 Content-Type: application/json
 
 {
-  "username": "Arm14Update",
-  "email": "arm14-2@mail.com",
-  "password": "armpw14-2"
+  "username": "arm",
+  "password": "arm123456"
 }
 
 ### Delete user by id
-DELETE http://localhost:3002/api/v2/users/6a0be447602ce46600d913ae
+DELETE http://localhost:3002/api/v2/users/6a06cd4e6af5d02ec5d82a23
+
+### Create a new user (Bcrypt)
+POST http://localhost:3002/api/v2/users/register
+Content-Type: application/json
+
+{
+  "username": "arm12",
+  "email": "arm12@mail.com",
+  "rold": "user",
+  "password": "arm123456-12"
+}
+
+### login a user (Bcrypt)
+POST http://localhost:3002/api/v2/users/login
+Content-Type: application/json
+
+{
+  "email": "arm12@mail.com",
+  "password": "arm123456-12"
+}

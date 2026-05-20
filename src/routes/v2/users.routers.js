@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { User } from "../../modules/users/user.model.js";
 import { supabase } from "../../config/supabase.js";
-import { getUsers, createUsers, updateUsers, deleteUsers } from "../../modules/users/users.v2.controller.js";
+import { getUsers, createUsers, updateUsers, deleteUsers, registerUsers, loginUsers } from "../../modules/users/users.v2.controller.js";
 
 export const router = Router();
 
@@ -9,7 +9,9 @@ export const router = Router();
 router.get("/", getUsers );
 router.post("/", createUsers );
 router.put("/:id", updateUsers );
-router.delete("/:id", deleteUsers  );
+router.delete("/:id", deleteUsers );
+router.post("/register", registerUsers );
+router.post("/login", loginUsers );
 
 // Supabase / PostgreSQL routes (/api/v2/users/pg)
 // Password is excluded from SELECT.
