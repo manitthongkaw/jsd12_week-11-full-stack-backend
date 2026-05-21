@@ -1,17 +1,25 @@
 import { Router } from "express";
+
 import { User } from "../../modules/users/user.model.js";
 import { supabase } from "../../config/supabase.js";
-import { getUsers, createUsers, updateUsers, deleteUsers, registerUsers, loginUsers } from "../../modules/users/users.v2.controller.js";
+import { getUsers, createUsers, updateUsers, deleteUsers, registerUsers, loginUsers, authMe, logoutUsers } from "../../modules/users/users.v2.controller.js";
+import { authUser } from "../../middlewares/auth.js";
 
 export const router = Router();
 
 // MongoDB
-router.get("/", getUsers );
-router.post("/", createUsers );
-router.put("/:id", updateUsers );
-router.delete("/:id", deleteUsers );
-router.post("/register", registerUsers );
-router.post("/login", loginUsers );
+router.get("/", getUsers);
+router.post("/", createUsers);
+router.put("/:id", updateUsers);
+router.delete("/:id", deleteUsers);
+router.post("/register", registerUsers);
+router.post("/login", loginUsers);
+
+// Check user session/token
+router.get("/auth/me", authUser, authMe);
+
+// Logout a user
+router.post("/auth/logout", logoutUsers);
 
 // Supabase / PostgreSQL routes (/api/v2/users/pg)
 // Password is excluded from SELECT.

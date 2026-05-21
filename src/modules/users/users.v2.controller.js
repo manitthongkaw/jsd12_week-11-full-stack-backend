@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import { User } from "./user.model.js";
 
 const userResponse = (doc) => {
@@ -113,15 +115,81 @@ export const loginUsers = async (req, res, next) => {
   }
   try {
     const user = await User.findOne({email}).select("+password");
-    const isMatch = await bcrypt.compare(password, user.password);
-    if(isMatch) {
-      return res.status(201).json({ success:true, message:"เข้าสู่ระบบสำเร็จ!" });
-    } else {
-      return res.status(400).json({ success:false, error:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+    if(!user) {
+      return res.status(400).json({ success:false, message:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
     }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(!isMatch) {
+      return res.status(400).json({ success:false, message:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+    }
+    /*else {
+      return res.status(201).json({ success:true, message:"เข้าสู่ระบบสำเร็จ!" });
+    }*/
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // 1 hour expiration
+    });
+    const isProd = process.env.NODE_ENV === "production";
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: isProd, // only send over HTTPS in production
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
+      maxAge: 60 * 60 * 1000, // 1 hour same expiresIn
+    });
+    return res.status(200).json({ 
+      success:true, 
+      message:"เข้าสู่ระบบสำเร็จ!", 
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
   }
   catch (err) {
-    return res.status(400).json({ success:false, error:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+    //return res.status(400).json({ success:false, error:"อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
     next(err);
   }
 };
+
+// JWT - session/token
+export const authMe = async (req, res, next) => {
+  try {
+    const userId = req.user.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(401).json({ sucess:false, message:"User not found!" });
+    }
+    return res.status(200).json({ 
+      success:true, 
+      data: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch(error) {
+    next(error);
+  }
+}
+export const logoutUsers = (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProd, // only send over HTTPS in production
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
+  });
+  return res.status(200).json({ success:true, message:"Logout successfully!" });
+
+};
+
+/*
+  logic for CRUD
+  1. Get variables from req object
+  2. Check values in variables
+  3. Do business login / CRUD operations
+  4. Send back res object in cluding business login data
+*/
